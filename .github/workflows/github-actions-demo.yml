@@ -4,19 +4,27 @@ on:
     branches: [lucianopinheirob-patch-1]
 
 jobs:
-  test-factorial:
+  test:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        ref: ${{ github.ref }}
-    - name: Setup Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
-    - name: Install dependencies
-      run: pip install pytest
-    - name: Test factorial function
-      run: pytest -v tests/test_factorial.py
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Run tests
+        run: |
+          python tests/test_factorial.py > test_results.json
+          echo "::set-output name=test_results::$(cat test_results.json)"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: test_results.json
+
 
